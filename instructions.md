@@ -1,4 +1,4 @@
-# Homework: Build Your Own Weather-Prediction MCP Server + Agent
+# Weather-Prediction MCP Server + Agent
 **Date:** 2026-08-08
 **Based on:** Day 3 (`databricks-lakebase-app-day-3`) - Agent Bricks + Alpaca Markets paper-trading MCP server
 
