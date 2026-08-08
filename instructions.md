@@ -5,7 +5,7 @@
 ---
 
 ## TL;DR
-Using [this repo](https://github.com) as a **reference pattern** (not a template to copy verbatim), build your own **MCP server** that exposes weather-forecast tools. Wire a **Databricks Agent Bricks agent** to use it for answering weather questions and making simple predictions/recommendations. Deploy both as **Databricks Apps**, following the same split as Day 3's `mcp_server/` + `dashboard/`.
+Build your own **MCP server** that exposes weather-forecast tools. Wire a **Databricks Agent Bricks agent** to use it for answering weather questions and making simple predictions/recommendations. Deploy both as **Databricks Apps**, following the same split as Day 3's `mcp_server/` + `dashboard/`.
 
 ---
 
