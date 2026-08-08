@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Weather Dashboard - Agent Bricks + Weather MCP</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 16px; color: #1a1a1a; }
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.1rem; margin-top: 28px; }
+    .controls { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    input { padding: 6px 10px; font-size: 0.95rem; border: 1px solid #ccc; border-radius: 6px; }
+    button { padding: 6px 14px; cursor: pointer; border: 1px solid #ccc; border-radius: 6px; background: #f5f5f5; }
+    .cards { display: flex; gap: 16px; margin-bottom: 8px; flex-wrap: wrap; }
+    .card { flex: 1; min-width: 150px; border: 1px solid #ddd; border-radius: 8px; padding: 16px; }
+    .card .label { color: #666; font-size: 0.85rem; }
+    .card .value { font-size: 1.4rem; font-weight: 600; }
+    .umbrella { padding: 12px 16px; border-radius: 8px; margin: 16px 0; font-weight: 600; }
+    .umbrella.yes { background: #fdecea; color: #b3261e; }
+    .umbrella.no { background: #e7f5ec; color: #0a7a2f; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+    .muted { color: #666; }
+    .err { color: #b3261e; }
+  </style>
+</head>
+<body>
+  <h1>🌦️ Weather Dashboard</h1>
+  <p class="muted">The same Open-Meteo data the Agent Bricks agent sees through the weather-prediction MCP server.</p>
+
+  <div class="controls">
+    <input id="location" type="text" value="{{ default_location }}" placeholder="City, zip, or lat,lon" size="28">
+    <button id="go">Check weather</button>
+  </div>
+
+  <div id="error" class="err"></div>
+
+  <h2 id="place">Current conditions</h2>
+  <div class="cards">
+    <div class="card"><div class="label">Temperature</div><div class="value" id="temp">-</div></div>
+    <div class="card"><div class="label">Feels like</div><div class="value" id="feels">-</div></div>
+    <div class="card"><div class="label">Conditions</div><div class="value" id="cond">-</div></div>
+    <div class="card"><div class="label">Wind</div><div class="value" id="wind">-</div></div>
+    <div class="card"><div class="label">Humidity</div><div class="value" id="humidity">-</div></div>
+  </div>
+
+  <div id="umbrella" class="umbrella no">-</div>
+
+  <h2>5-Day Forecast</h2>
+  <table>
+    <thead><tr><th>Date</th><th>Conditions</th><th>High</th><th>Low</th><th>Precip %</th><th>Max Wind</th></tr></thead>
+    <tbody id="forecast-body"></tbody>
+  </table>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    async function refresh() {
+      const location = $('location').value.trim() || 'Chicago';
+      $('error').textContent = '';
+      try {
+        const [current, forecast, umbrella] = await Promise.all([
+          fetch(`/api/current?location=${encodeURIComponent(location)}`).then(r => r.json()),
+          fetch(`/api/forecast?location=${encodeURIComponent(location)}&days=5`).then(r => r.json()),
+          fetch(`/api/umbrella?location=${encodeURIComponent(location)}`).then(r => r.json()),
+        ]);
+
+        if (current.error) throw new Error(current.error);
+
+        const u = current.units || {};
+        $('place').textContent = 'Current conditions - ' + (current.location || location);
+        $('temp').textContent = fmt(current.temperature, u.temperature);
+        $('feels').textContent = fmt(current.feels_like, u.temperature);
+        $('cond').textContent = current.conditions ?? '-';
+        $('wind').textContent = current.wind_speed != null
+          ? `${current.wind_speed} ${u.wind_speed || ''} ${current.wind_direction || ''}`.trim()
+          : '-';
+        $('humidity').textContent = fmt(current.humidity, u.humidity);
+
+        const ub = $('umbrella');
+        if (umbrella && !umbrella.error) {
+          ub.className = 'umbrella ' + (umbrella.umbrella_needed ? 'yes' : 'no');
+          ub.textContent = (umbrella.umbrella_needed ? '☔ Bring an umbrella today - ' : '🌂 No umbrella needed today - ')
+            + `${umbrella.precip_probability ?? '?'}% chance of precipitation (${umbrella.conditions}).`;
+        }
+
+        const body = $('forecast-body');
+        body.innerHTML = '';
+        const fu = forecast.units || {};
+        for (const d of (forecast.days || [])) {
+          body.innerHTML += `<tr>
+            <td>${d.date}</td><td>${d.conditions}</td>
+            <td>${fmt(d.temp_high, fu.temperature)}</td>
+            <td>${fmt(d.temp_low, fu.temperature)}</td>
+            <td>${d.precip_probability ?? '-'}%</td>
+            <td>${fmt(d.wind_max, fu.wind_speed)}</td>
+          </tr>`;
+        }
+      } catch (e) {
+        $('error').textContent = 'Error: ' + e.message;
+      }
+    }
+
+    const fmt = (v, unit) => v == null ? '-' : `${v}${unit || ''}`;
+
+    $('go').addEventListener('click', refresh);
+    $('location').addEventListener('keydown', (e) => { if (e.key === 'Enter') refresh(); });
+    refresh();
+  </script>
+</body>
+</html>

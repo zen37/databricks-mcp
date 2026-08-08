@@ -1,0 +1,22 @@
+command:
+  - "python"
+  - "app.py"
+
+env:
+  # Open-Meteo needs no API key, so there are no secrets to configure here.
+  - name: DEFAULT_LOCATION
+    value: "Chicago"
+  - name: WEATHER_API_BASE
+    value: "https://api.open-meteo.com/v1/forecast"
+  - name: GEOCODING_API_BASE
+    value: "https://geocoding-api.open-meteo.com/v1/search"
+  - name: WEATHER_TEMP_UNIT
+    value: "fahrenheit"
+  - name: WEATHER_WIND_UNIT
+    value: "mph"
+  - name: WEATHER_PRECIP_UNIT
+    value: "inch"
+  - name: UMBRELLA_PROB_THRESHOLD
+    value: "40"
+  - name: UMBRELLA_PRECIP_THRESHOLD
+    value: "0.1"
