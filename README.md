@@ -119,8 +119,10 @@ apps pointed at two subfolders of the same Git folder:
 1. Create a Git folder for this repo (once).
 2. **MCP server app:** Compute > Apps > Create app > Custom, name it e.g.
    `weather-mcp`, point its source at this repo's `mcp_server/` subfolder (so it
-   picks up `mcp_server/app.yaml`). Deploy it and copy its app URL - you'll
-   register that URL as an external MCP server in step 3.
+   picks up `mcp_server/app.yaml`). Deploy it and copy its base app URL (shown
+   under **App status**, e.g. `https://mcp-server-xxxx.aws.databricksapps.com`) -
+   you'll register that URL **with `/mcp` appended** as an external MCP server in
+   step 3.
 3. **Dashboard app:** repeat, naming it e.g. `weather-dashboard`, pointing at
    `dashboard/`. Deploy it and open its URL to confirm the dashboard loads.
 
@@ -130,9 +132,15 @@ Follow
 [Connect agents to external MCPs and tools](https://docs.databricks.com/aws/en/agents/mcp-tools/connect-external):
 
 1. In your workspace, go to **AI Gateway** > **MCPs** > **Add MCP**.
-2. Paste the `weather-mcp` app's URL as the server endpoint (streamable HTTP).
-3. Name it (e.g. `weather-prediction`) and save. Databricks will introspect the
-   server and list the tools.
+2. Set the **Server URL** to the `weather-mcp` app's base URL **with `/mcp`
+   appended** - e.g. `https://mcp-server-xxxx.aws.databricksapps.com/mcp`. The
+   FastMCP server serves the streamable-HTTP transport at the `/mcp` path, not at
+   the app root, so the bare app URL will fail to load tools.
+3. Choose an **Authentication** method (Bearer token with a Databricks PAT is the
+   simplest; OAuth U2M per-user forwards the end user's identity to
+   `get_current_user()`).
+4. Name it (e.g. `weather-prediction`) and click **Create & load tools** -
+   Databricks will introspect the server and list the 6 tools.
 
 ### 4. Build the Agent Bricks agent
 
