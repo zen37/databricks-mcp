@@ -172,8 +172,15 @@ Paste or screenshot the agent's tool calls + final answers for your submission.
   tune the agent's judgment without changing code.
 
 ----
+ # Links
 
- # Screenshots
+ https://github.com/zen37/databricks-mcp
+
+ https://weather-dashboard-7474651165193831.aws.databricksapps.com
+
+ https://mcp-server-7474651165193831.aws.databricksapps.com
+
+ ## Screenshots
 
  <img width="867" height="860" alt="image" src="https://github.com/user-attachments/assets/070d64d8-8d72-47ff-8793-5431dc3bde17" />
 
