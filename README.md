@@ -170,3 +170,20 @@ Paste or screenshot the agent's tool calls + final answers for your submission.
 - Thresholds for the prediction tools (`UMBRELLA_PROB_THRESHOLD`,
   `JACKET_TEMP_THRESHOLD`, etc.) are env vars set in each `app.yaml`, so you can
   tune the agent's judgment without changing code.
+
+----
+
+ # Screenshots
+
+ <img width="867" height="860" alt="image" src="https://github.com/user-attachments/assets/070d64d8-8d72-47ff-8793-5431dc3bde17" />
+
+ <img width="957" height="885" alt="image" src="https://github.com/user-attachments/assets/dcc1dcb5-b6ec-41c6-aa8a-3c1547358a08" />
+
+ <img width="1005" height="915" alt="image" src="https://github.com/user-attachments/assets/08849b80-e1ef-4619-886f-bd2ed0ecedda" />
+
+ <img width="887" height="920" alt="image" src="https://github.com/user-attachments/assets/57fb406e-355b-4960-a3d6-00d4c512863c" />
+
+
+
+
+ 
